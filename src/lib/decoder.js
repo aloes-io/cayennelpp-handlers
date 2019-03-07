@@ -14,8 +14,6 @@ import {
 } from './common';
 import {logger} from '../logger';
 
-/** @module cayenneDecoder */
-
 /**
  * Return a float value and
  * increment the buffer cursor
@@ -161,7 +159,8 @@ const getLocation = (buffer, cursor) => {
 };
 
 /**
- * Decode LoraWan buffer containing a Cayenne payload
+ * Decode LoraWan buffer containing a [CayenneLPP]{@link /cayennelpp/#cayennelpp} payload
+ * @method cayenneBufferDecoder
  * @param {object} buffer - Decoded LoraWan packet.
  * @returns {object} Decoded channels
  */
@@ -234,9 +233,9 @@ const cayenneBufferDecoder = buffer => {
 };
 
 /**
- * Find corresponding OMA object to incoming CayenneLPP datas
+ * Find corresponding [OMA Object]{@link /cayennelpp/#omaobjects} to incoming [CayenneLPP]{@link /cayennelpp/#cayennelpp} datas
  * pattern - '+appEui/+type/+method/+gatewayId/#device'
- * @static
+ * @method cayenneToOmaObject
  * @param {object} msg - Decoded MQTT packet.
  * @returns {object} composed instance
  */
@@ -290,7 +289,7 @@ const cayenneToOmaObject = (packet, protocol) => {
 };
 
 /**
- * Find corresponding OMA resource to incoming CayenneLPP datas
+ * Find corresponding [OMA Resources]{@link /cayennelpp/#omaresources} to incoming [CayenneLPP]{@link /cayennelpp/#cayennelpp} datas
  * pattern - '+appEui/+type/+method/+gatewayId/#device'
  * @static
  * @param {object} msg - Decoded MQTT packet.
@@ -339,7 +338,7 @@ const cayenneToOmaResources = (packet, protocol) => {
 };
 
 /**
- * Convert incoming CayenneLPP data to Aloes Client sensor instance
+ * Convert incoming [CayenneLPP]{@link /cayennelpp/#cayennelpp} data to Aloes Client sensor instance
  * pattern - "+prefixedDevEui/+nodeId/+sensorId/+method/+ack/+subType"
  * @param {object} packet - Incoming MQTT packet.
  * @param {object} protocol - Protocol paramters ( coming from patternDetector ).

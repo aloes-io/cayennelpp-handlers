@@ -12,9 +12,15 @@
  */
 
 /**
+ * Cayenne Low Power Payload.
+ * @external CayenneLPP
+ * @see {@link https://mydevices.com/cayenne/docs/lora/#lora-cayenne-low-power-payload}
+ */
+
+/**
  * References used to validate payloads
  * @namespace
- * @property {string}  pattern - The pattern used by CayenneLPP devices.
+ * @property {string}  pattern - The pattern used by [CayenneLPP]{@link /cayennelpp/#cayennelpp} devices.
  * @property {object}  validators - Check inputs / build outputs
  * @property {array}   validators.methods - [0, 1, 2, 3, 4].
  */

@@ -25,8 +25,6 @@ import {
 } from './common';
 import {logger} from '../logger';
 
-/** @module cayenneEncoder */
-
 // Data ID + Data Type + Data Size
 const maxSize = 13;
 const maxChannelValue = 99;
@@ -298,7 +296,7 @@ const getPayload = (buffer, cursor) => {
 
 /**
  * Filling the buffer with desired sensor parameters and value
- * @static
+ * @method cayenneBufferEncoder
  * @param {object} buffer - Empty buffer.
  * @param {int} type - CayenneLPP type.
  * @param {int} channel - CayenneLPP Channel ( max value: 99 ).
@@ -366,8 +364,9 @@ const cayenneBufferEncoder = (buffer, type, channel, value) => {
 };
 
 /**
- * Convert incoming Aloes Client data to CayenneLPP
+ * Convert incoming Aloes Client data to [CayenneLPP]{@link /cayennelpp/#cayennelpp}
  * pattern - '+appEui/+type/+method/+gatewayId/#device'
+ * @method cayenneEncoder
  * @param {object} packet - Sensor instance.
  */
 

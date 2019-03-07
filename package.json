@@ -1,7 +1,7 @@
 {
   "name": "cayennelpp-handlers",
   "version": "1.0.0",
-  "description": "Encode / decode MQTT stream from Devices using Aloes Light protocol",
+  "description": "Encode / decode MQTT stream from Devices using CayenneLPP protocol",
   "main": "./dist/index.js",
   "unpkg": "cayennelpp-handlers.min.js",
   "scripts": {
