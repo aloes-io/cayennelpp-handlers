@@ -28,6 +28,8 @@ describe('cayenneDecoder - test 1', () => {
     'nativeResource',
     'resource',
     'resources',
+    'transportProtocol',
+    'messageProtocol',
     // 'inputPath',
     // 'outputPath',
     // 'inPrefix',
@@ -76,6 +78,8 @@ describe('cayenneDecoder - test 2', () => {
   const decoded = cayenneDecoder(payload, params);
   const keys = [
     'type',
+    'transportProtocol',
+    'messageProtocol',
     'devAddr',
     'devEui',
     'nativeSensorId',
@@ -90,13 +94,12 @@ describe('cayenneDecoder - test 2', () => {
     'name',
   ];
 
-  it('decoded should contain 2 channels', () => {
-    assert.equal(2, decoded.length);
+  it('decoded should contain 1 channels', () => {
+    assert.equal(1, decoded.length);
   });
 
-  it('channel 1 & 2 should exist', () => {
+  it('channel 1 should exist', () => {
     assert.typeOf(decoded[0], 'object');
-    assert.typeOf(decoded[1], 'object');
   });
 
   it('channel 1 should contain all sensor instance properties', () => {
@@ -125,6 +128,8 @@ describe('cayenneDecoder - test 3', () => {
   const decoded = cayenneDecoder(payload, params);
   const keys = [
     'type',
+    'transportProtocol',
+    'messageProtocol',
     'devAddr',
     'devEui',
     'nativeSensorId',

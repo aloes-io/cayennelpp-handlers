@@ -264,6 +264,8 @@ const cayenneToOmaObject = (packet, protocol) => {
 
       return {
         packet,
+        transportProtocol: protocol.transportProtocol || null,
+        messageProtocol: 'cayenneLPP',
         name: omaObject.name,
         icons: omaView.icons,
         colors: omaView.resources,
@@ -317,6 +319,8 @@ const cayenneToOmaResources = (packet, protocol) => {
       };
       return {
         packet,
+        transportProtocol: protocol.transportProtocol || null,
+        messageProtocol: 'cayenneLPP',
         nativeType,
         nativeResource,
         nativeSensorId: index,
@@ -354,6 +358,7 @@ const cayenneDecoder = (packet, protocol) => {
     logger(4, 'handlers', 'cayenneToOmaResources:req', packet);
 
     if (protocol.method && (protocol.devEui || protocol.devAddr)) {
+      protocol.transportProtocol = 'loraWan';
       if (
         protocol.method === 'Unconfirmed Data Up' ||
         protocol.method === 'Confirmed Data Up'
