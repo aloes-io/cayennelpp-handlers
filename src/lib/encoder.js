@@ -1,4 +1,5 @@
 import floor from 'lodash.floor';
+import logger from 'aloes-logger';
 import {
   ANALOG_INPUT,
   ANALOG_INPUT_SIZE,
@@ -23,7 +24,6 @@ import {
   LOCATION,
   LOCATION_SIZE,
 } from './common';
-import {logger} from '../logger';
 
 // Data ID + Data Type + Data Size
 const maxSize = 13;
@@ -36,7 +36,7 @@ const maxChannelValue = 99;
  */
 const validate = channel => {
   if (channel > maxChannelValue) {
-    throw new Error('Channels above 100 are reserved.');
+    throw 'Channels above 100 are reserved.';
   }
 };
 
@@ -306,7 +306,7 @@ const getPayload = (buffer, cursor) => {
 const cayenneBufferEncoder = (buffer, type, channel, value) => {
   try {
     let cursor = 0;
-    logger(4, 'handlers', 'cayenneBufferEncoder:req', {
+    logger(4, 'cayennelpp-handlers', 'bufferEncoder:req', {
       buffer,
       type,
       channel,
@@ -347,18 +347,18 @@ const cayenneBufferEncoder = (buffer, type, channel, value) => {
         cursor = addLocation(buffer, cursor, channel, value);
         break;
       default:
-        logger(2, 'handlers', 'Unsupported data type', type);
+        logger(2, 'cayennelpp-handlers', 'Unsupported data type', type);
         break;
     }
     const payload = getPayload(buffer, cursor);
-    logger(5, 'handlers', 'cayenneBufferEncoder:res', {
+    logger(5, 'cayennelpp-handlers', 'bufferEncoder:res', {
       cursor,
       buffer,
       payload,
     });
     return payload;
   } catch (error) {
-    logger(2, 'handlers', 'cayenneBufferEncoder:err', error);
+    logger(2, 'cayennelpp-handlers', 'bufferEncoder:err', error);
     return error;
   }
 };
@@ -377,21 +377,21 @@ const cayenneEncoder = instance => {
       instance.messageProtocol &&
       instance.messageProtocol.toLowerCase() === 'cayennelpp'
     ) {
-      logger(4, 'handlers', 'cayenneEncoder:req', instance);
+      logger(4, 'cayennelpp-handlers', 'encoder:req', instance);
       const buffer = Buffer.alloc(maxSize);
       const channel = Number(instance.nativeSensorId);
       const type = Number(instance.nativeType);
       const value = Number(instance.value);
       const payload = cayenneBufferEncoder(buffer, type, channel, value);
-      logger(4, 'handlers', 'cayenneEncoder:res', payload);
+      logger(4, 'cayennelpp-handlers', 'encoder:res', payload);
       if (!payload || payload === null) {
-        return 'Type not supported yet';
+        throw 'Error : Type not supported yet';
       }
       return payload;
     }
-    return new Error('Error: Invalid instance');
+    throw 'Error: Invalid instance';
   } catch (error) {
-    logger(4, 'handlers', 'cayenneEncoder:err', error);
+    logger(4, 'cayennelpp-handlers', 'encoder:err', error);
     return error;
   }
 };

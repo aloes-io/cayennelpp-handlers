@@ -6,9 +6,9 @@
   "unpkg": "cayennelpp-handlers.min.js",
   "scripts": {
     "lint": "npx eslint --ext js .",
-    "test:cayenne-detector": "mocha --require @babel/register ./src/test/detector.spec.js",
-    "test:cayenne-decoder": "mocha --require @babel/register ./src/test/decoder.spec.js",
-    "test:cayenne-encoder": "mocha --require @babel/register ./src/test/encoder.spec.js",
+    "test:cayenne-detector": "export NODE_ENV=test; mocha --require @babel/register ./src/test/detector.spec.js",
+    "test:cayenne-decoder": "export NODE_ENV=test; mocha --require @babel/register ./src/test/decoder.spec.js",
+    "test:cayenne-encoder": "export NODE_ENV=test; mocha --require @babel/register ./src/test/encoder.spec.js",
     "test:cayenne": "npm run test:cayenne-detector; npm run test:cayenne-decoder; npm run test:cayenne-encoder",
     "test": "npm run test:cayenne",
     "docs:cayennelpp": "jsdoc2md ./src/lib/* > ./docs/cayennelpp/README.md",
@@ -40,6 +40,7 @@
     "npm": ">=6.0.0"
   },
   "dependencies": {
+    "aloes-logger": "^1.0.4",
     "lodash.floor": "^4.0.4",
     "lora-packet": "^0.7.7",
     "mqtt-pattern": "^1.2.0",
@@ -77,7 +78,7 @@
     "mocha": "^5.2.0",
     "nodemon": "^1.18.8",
     "prettier": "1.16.1",
-    "vuepress": "^1.0.0-alpha.42"
+    "vuepress": "^1.0.0-alpha.47"
   },
   "peerDependencies": {
     "mqtt-pattern": "^1.2.0",

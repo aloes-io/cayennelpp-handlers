@@ -1,4 +1,5 @@
 import {omaObjects, omaViews} from 'oma-json';
+import logger from 'aloes-logger';
 import {
   ANALOG_INPUT,
   DIGITAL_INPUT,
@@ -12,7 +13,6 @@ import {
   GYROMETER,
   LOCATION,
 } from './common';
-import {logger} from '../logger';
 
 /**
  * Return a float value and
@@ -169,7 +169,7 @@ const cayenneBufferDecoder = buffer => {
     const channels = {};
     let cursor = 0;
     let current = null;
-    logger(2, 'handlers', 'cayenneBufferDecoder:req', {buffer, cursor});
+    logger(3, 'cayennelpp- handlers', 'bufferDecoder:req', {buffer, cursor});
     while (cursor < buffer.length) {
       if (current !== null) {
         // channel part is defined
@@ -209,7 +209,7 @@ const cayenneBufferDecoder = buffer => {
             break;
           default:
             delete channels[buffer[cursor]];
-            logger(2, 'handlers', 'Unsupported data type', `${buffer[cursor]}`);
+            logger(2, 'cayennelpp- handlers', 'Unsupported data type', `${buffer[cursor]}`);
             break;
         }
         cursor += 1;
@@ -223,11 +223,11 @@ const cayenneBufferDecoder = buffer => {
         }
       }
     }
-    logger(2, 'handlers', 'cayenneBufferDecoder:res', {channels});
-    if (!channels) return 'Unsupported data type';
+    logger(2, 'cayennelpp- handlers', 'bufferDecoder:res', {channels});
+    if (!channels) throw 'Unsupported data type';
     return channels;
   } catch (error) {
-    logger(2, 'handlers', 'cayenneBufferDecoder:err', error);
+    logger(2, 'cayennelpp- handlers', 'bufferDecoder:err', error);
     return error;
   }
 };
@@ -242,9 +242,9 @@ const cayenneBufferDecoder = buffer => {
 const cayenneToOmaObject = (packet, protocol) => {
   try {
     if (!packet || packet === null) {
-      return new Error('Wrong instance input');
+      throw 'Error : Wrong instance input';
     }
-    logger(4, 'handlers', 'cayenneToOmaObject:req', packet);
+    logger(4, 'cayennelpp- handlers', 'toOmaObject:req', packet);
     //  const maxsize = 51;
     const channels = cayenneBufferDecoder(packet);
     const nativeTypes = Object.getOwnPropertyNames(channels);
@@ -253,7 +253,7 @@ const cayenneToOmaObject = (packet, protocol) => {
       const omaObject = omaObjects.find(
         object => object.value === Number(nativeType) + 3200,
       );
-      if (!omaObject) return new Error('Wrong OMA id');
+      if (!omaObject) throw 'Error : Wrong OMA Object id';
       const omaView = omaViews.find(
         object => object.value === Number(nativeType) + 3200,
       );
@@ -282,10 +282,10 @@ const cayenneToOmaObject = (packet, protocol) => {
       };
     });
 
-    logger(4, 'handlers', 'cayenneToOmaObject:res', decoded);
+    logger(4, 'cayennelpp- handlers', 'toOmaObject:res', decoded);
     return decoded;
   } catch (error) {
-    logger(2, 'handlers', 'cayenneToOmaObject:err', error);
+    logger(2, 'cayennelpp- handlers', 'toOmaObject:err', error);
     return error;
   }
 };
@@ -300,9 +300,9 @@ const cayenneToOmaObject = (packet, protocol) => {
 const cayenneToOmaResources = (packet, protocol) => {
   try {
     if (!packet || packet == null) {
-      return new Error('Wrong instance input');
+      throw 'Error : Wrong instance input';
     }
-    logger(4, 'handlers', 'cayenneToOmaResources:req', packet);
+    logger(4, 'cayennelpp- handlers', 'toOmaResources:req', packet);
 
     //  const maxsize = 51;
     const channels = cayenneBufferDecoder(packet);
@@ -312,7 +312,7 @@ const cayenneToOmaResources = (packet, protocol) => {
       const omaObject = omaObjects.find(
         object => object.value === Number(nativeType) + 3200,
       );
-      if (!omaObject) return new Error('Wrong OMA id');
+      if (!omaObject) throw 'Error : Wrong OMA Object id';
       const resources = {
         ...omaObject.resources,
         ...channels[nativeType],
@@ -333,10 +333,10 @@ const cayenneToOmaResources = (packet, protocol) => {
       };
     });
 
-    logger(4, 'handlers', 'cayenneToOmaResources:res', decoded);
+    logger(4, 'cayennelpp- handlers', 'toOmaResources:res', decoded);
     return decoded;
   } catch (error) {
-    logger(2, 'handlers', 'cayenneToOmaResources:err', error);
+    logger(2, 'cayennelpp- handlers', 'toOmaResources:err', error);
     return error;
   }
 };
@@ -351,11 +351,9 @@ const cayenneToOmaResources = (packet, protocol) => {
 const cayenneDecoder = (packet, protocol) => {
   try {
     if (!protocol.packet || !protocol.packet.getBuffers()) {
-      return new Error('Error: Missing packet');
+      throw 'Error: Missing packet';
     }
-    logger(4, 'handlers', 'cayenneDecoder:req', protocol.method);
-
-    logger(4, 'handlers', 'cayenneToOmaResources:req', packet);
+    logger(4, 'cayennelpp- handlers', 'decoder:req', protocol.method);
 
     if (protocol.method && (protocol.devEui || protocol.devAddr)) {
       protocol.transportProtocol = 'loraWan';
@@ -378,11 +376,11 @@ const cayenneDecoder = (packet, protocol) => {
         return cayenneToOmaResources(packet, protocol);
         //  }
       }
-      return new Error('Error: Invalid method');
+      throw 'Error: Invalid method';
     }
-    return new Error('Error: Invalid params');
+    throw 'Error: Invalid params';
   } catch (error) {
-    logger(2, 'handlers', 'cayenneDecoder:err', error);
+    logger(2, 'cayennelpp- handlers', 'decoder:err', error);
     return error;
   }
 };

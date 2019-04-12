@@ -1,5 +1,5 @@
 import loraPacket from 'lora-packet';
-import {logger} from '../logger';
+import logger from 'aloes-logger';
 import protocolRef from './common';
 
 /**
@@ -14,12 +14,18 @@ const cayennePatternDetector = payload => {
   try {
     const pattern = {name: 'empty', params: {}};
     const packet = loraPacket.fromWire(payload);
+    logger(
+      2,
+      'cayennelpp-handlers',
+      'patternDetector:req',
+      packet.getMType().toString('hex'),
+    );
     if (!packet || packet === null || !packet.getBuffers()) {
-      return new Error('Error: Missing packet');
+      throw 'Error: Missing packet';
     }
     const method = packet.getMType().toString('hex');
     if (!method || method === null) {
-      return new Error('Error: Invalid packet');
+      throw 'Error: Invalid packet';
     }
     const methodExists = protocolRef.validators.methods.some(
       meth => meth === method,
@@ -45,7 +51,7 @@ const cayennePatternDetector = payload => {
       pattern.params.appEui = packet.getBuffers().AppEUI.toString('hex');
       pattern.params.devNonce = packet.getBuffers().DevNonce.toString('hex');
     } else {
-      return new Error('Error: Missing device');
+      return pattern;
     }
 
     if (methodExists && deviceIsValid) {
@@ -54,14 +60,14 @@ const cayennePatternDetector = payload => {
       pattern.params.packet = packet;
       return pattern;
     }
-
-    return new Error('Error: Invalid packet');
+    return pattern;
+    //  throw 'Error: Invalid packet';
   } catch (error) {
     let err = error;
     if (!err) {
       err = new Error('Error: invalid packet');
     }
-    logger(2, 'handlers', 'cayennePatternDetector:err', err);
+    logger(2, 'cayennelpp-handlers', 'patternDetector:err', err);
     return err;
   }
 };
