@@ -1,6 +1,6 @@
 {
   "name": "cayennelpp-handlers",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Encode / decode MQTT stream from Devices using CayenneLPP protocol",
   "main": "./src/index.js",
   "scripts": {
