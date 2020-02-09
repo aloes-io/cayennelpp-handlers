@@ -1,6 +1,6 @@
-import floor from 'lodash.floor';
-import logger from 'aloes-logger';
-import {
+const floor = require('lodash.floor');
+const logger = require('aloes-logger');
+const {
   ANALOG_INPUT,
   ANALOG_INPUT_SIZE,
   DIGITAL_INPUT,
@@ -23,7 +23,7 @@ import {
   GYROMETER_SIZE,
   LOCATION,
   LOCATION_SIZE,
-} from './common';
+} = require('./common');
 
 // Data ID + Data Type + Data Size
 const maxSize = 13;
@@ -36,7 +36,7 @@ const maxChannelValue = 99;
  */
 const validate = channel => {
   if (channel > maxChannelValue) {
-    throw 'Channels above 100 are reserved.';
+    throw new Error('Channels above 100 are reserved.');
   }
 };
 
@@ -359,7 +359,7 @@ const cayenneBufferEncoder = (buffer, type, channel, value) => {
     return payload;
   } catch (error) {
     logger(2, 'cayennelpp-handlers', 'bufferEncoder:err', error);
-    return error;
+    return null;
   }
 };
 
@@ -385,14 +385,14 @@ const cayenneEncoder = instance => {
       const payload = cayenneBufferEncoder(buffer, type, channel, value);
       logger(4, 'cayennelpp-handlers', 'encoder:res', payload);
       if (!payload || payload === null) {
-        throw 'Error : Type not supported yet';
+        throw new Error('Type not supported');
       }
       return payload;
     }
-    throw 'Error: Invalid instance';
+    throw new Error('Invalid instance');
   } catch (error) {
     logger(4, 'cayennelpp-handlers', 'encoder:err', error);
-    return error;
+    return null;
   }
 };
 

@@ -1,14 +1,13 @@
-/* LPP_TYPE = IPSO_OBJECT_ID - 3200 */
 /**
  * Oma Object References.
  * @external OmaObjects
- * @see {@link https://api.aloes.io/api/omaObjects}
+ * @see {@link https://aloes.io/app/api/omaObjects}
  */
 
 /**
  * Oma Resources References.
  * @external OmaResources
- * @see {@link https://api.aloes.io/api/omaResources}
+ * @see {@link https://aloes.io/app/api/omaResources}
  */
 
 /**
@@ -19,6 +18,9 @@
 
 /**
  * References used to validate payloads
+ *
+ * LPP_TYPE = IPSO_OBJECT_ID - 3200
+ *
  * @namespace
  * @property {string}  pattern - The pattern used by [CayenneLPP]{@link /cayennelpp/#cayennelpp} devices.
  * @property {object}  validators - Check inputs / build outputs

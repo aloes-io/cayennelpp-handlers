@@ -1,6 +1,6 @@
-import {omaObjects, omaViews} from 'oma-json';
-import logger from 'aloes-logger';
-import {
+const {omaObjects, omaViews} = require('oma-json');
+const logger = require('aloes-logger');
+const {
   ANALOG_INPUT,
   DIGITAL_INPUT,
   PRESENCE,
@@ -12,7 +12,7 @@ import {
   UNIXTIME,
   GYROMETER,
   LOCATION,
-} from './common';
+} = require('./common');
 
 /**
  * Return a float value and
@@ -209,7 +209,12 @@ const cayenneBufferDecoder = buffer => {
             break;
           default:
             delete channels[buffer[cursor]];
-            logger(2, 'cayennelpp- handlers', 'Unsupported data type', `${buffer[cursor]}`);
+            logger(
+              2,
+              'cayennelpp- handlers',
+              'Unsupported data type',
+              `${buffer[cursor]}`,
+            );
             break;
         }
         cursor += 1;
@@ -224,11 +229,11 @@ const cayenneBufferDecoder = buffer => {
       }
     }
     logger(2, 'cayennelpp- handlers', 'bufferDecoder:res', {channels});
-    if (!channels) throw 'Unsupported data type';
+    if (!channels) throw new Error('Unsupported data type');
     return channels;
   } catch (error) {
     logger(2, 'cayennelpp- handlers', 'bufferDecoder:err', error);
-    return error;
+    return null;
   }
 };
 
@@ -242,7 +247,7 @@ const cayenneBufferDecoder = buffer => {
 const cayenneToOmaObject = (packet, protocol) => {
   try {
     if (!packet || packet === null) {
-      throw 'Error : Wrong instance input';
+      throw new Error('Wrong packet input');
     }
     logger(4, 'cayennelpp- handlers', 'toOmaObject:req', packet);
     //  const maxsize = 51;
@@ -253,7 +258,7 @@ const cayenneToOmaObject = (packet, protocol) => {
       const omaObject = omaObjects.find(
         object => object.value === Number(nativeType) + 3200,
       );
-      if (!omaObject) throw 'Error : Wrong OMA Object id';
+      if (!omaObject) throw new Error('Wrong OMA Object id');
       const omaView = omaViews.find(
         object => object.value === Number(nativeType) + 3200,
       );
@@ -286,7 +291,7 @@ const cayenneToOmaObject = (packet, protocol) => {
     return decoded;
   } catch (error) {
     logger(2, 'cayennelpp- handlers', 'toOmaObject:err', error);
-    return error;
+    return null;
   }
 };
 
@@ -300,7 +305,7 @@ const cayenneToOmaObject = (packet, protocol) => {
 const cayenneToOmaResources = (packet, protocol) => {
   try {
     if (!packet || packet == null) {
-      throw 'Error : Wrong instance input';
+      throw new Error('Wrong packet input');
     }
     logger(4, 'cayennelpp- handlers', 'toOmaResources:req', packet);
 
@@ -312,7 +317,7 @@ const cayenneToOmaResources = (packet, protocol) => {
       const omaObject = omaObjects.find(
         object => object.value === Number(nativeType) + 3200,
       );
-      if (!omaObject) throw 'Error : Wrong OMA Object id';
+      if (!omaObject) throw new Error('Wrong OMA Object id');
       const resources = {
         ...omaObject.resources,
         ...channels[nativeType],
@@ -337,7 +342,7 @@ const cayenneToOmaResources = (packet, protocol) => {
     return decoded;
   } catch (error) {
     logger(2, 'cayennelpp- handlers', 'toOmaResources:err', error);
-    return error;
+    return null;
   }
 };
 
@@ -351,7 +356,7 @@ const cayenneToOmaResources = (packet, protocol) => {
 const cayenneDecoder = (packet, protocol) => {
   try {
     if (!protocol.packet || !protocol.packet.getBuffers()) {
-      throw 'Error: Missing packet';
+      throw new Error('Wrong packet input');
     }
     logger(4, 'cayennelpp- handlers', 'decoder:req', protocol.method);
 
@@ -376,18 +381,18 @@ const cayenneDecoder = (packet, protocol) => {
         return cayenneToOmaResources(packet, protocol);
         //  }
       }
-      throw 'Error: Invalid method';
+      throw new Error('Invalid method');
     }
-    throw 'Error: Invalid params';
+    throw new Error('Invalid params');
   } catch (error) {
     logger(2, 'cayennelpp- handlers', 'decoder:err', error);
-    return error;
+    return null;
   }
 };
 
 module.exports = {
-  // cayenneToOmaObject,
-  // cayenneToOmaResources,
+  cayenneToOmaObject,
+  cayenneToOmaResources,
   cayenneBufferDecoder,
   cayenneDecoder,
 };

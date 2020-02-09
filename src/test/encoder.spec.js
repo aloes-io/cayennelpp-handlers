@@ -1,8 +1,6 @@
-require('@babel/register');
-
-import {assert} from 'chai';
-import {cayenneEncoder} from '../lib/encoder';
-import {cayennePatternDetector} from '../lib/detector';
+const {assert} = require('chai');
+const {cayenneEncoder} = require('../lib/encoder');
+const {cayennePatternDetector} = require('../lib/detector');
 
 //  cayenneLPPPattern: '+appEui/+type/+method/+gatewayId/#device',
 

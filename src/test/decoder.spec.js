@@ -1,6 +1,6 @@
-import {assert} from 'chai';
-import {cayenneDecoder} from '../lib/decoder';
-import {cayennePatternDetector} from '../lib/detector';
+const {assert} = require('chai');
+const {cayenneDecoder} = require('../lib/decoder');
+const {cayennePatternDetector} = require('../lib/detector');
 
 //  cayenneLPPPattern: '+appEui/+type/+method/+gatewayId/#device',
 

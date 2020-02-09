@@ -1,6 +1,6 @@
-import loraPacket from 'lora-packet';
-import logger from 'aloes-logger';
-import protocolRef from './common';
+const loraPacket = require('lora-packet');
+const logger = require('aloes-logger');
+const protocolRef = require('./common');
 
 /**
  * Check incoming MQTT packet.payload against [CayenneLPP]{@link /cayennelpp/#cayennelpp}
@@ -21,11 +21,11 @@ const cayennePatternDetector = payload => {
       packet.getMType().toString('hex'),
     );
     if (!packet || packet === null || !packet.getBuffers()) {
-      throw 'Error: Missing packet';
+      throw new Error('Missing packet');
     }
     const method = packet.getMType().toString('hex');
     if (!method || method === null) {
-      throw 'Error: Invalid packet';
+      throw new Error('Invalid packet');
     }
     const methodExists = protocolRef.validators.methods.some(
       meth => meth === method,
@@ -63,12 +63,8 @@ const cayennePatternDetector = payload => {
     return pattern;
     //  throw 'Error: Invalid packet';
   } catch (error) {
-    let err = error;
-    if (!err) {
-      err = new Error('Error: invalid packet');
-    }
-    logger(2, 'cayennelpp-handlers', 'patternDetector:err', err);
-    return err;
+    logger(2, 'cayennelpp-handlers', 'patternDetector:err', error);
+    return null;
   }
 };
 

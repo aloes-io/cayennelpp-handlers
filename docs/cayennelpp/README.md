@@ -3,6 +3,7 @@
 <dl>
 <dt><a href="#protocolRef">protocolRef</a> : <code>object</code></dt>
 <dd><p>References used to validate payloads</p>
+<p>LPP_TYPE = IPSO_OBJECT_ID - 3200</p>
 </dd>
 </dl>
 
@@ -143,6 +144,8 @@ pattern - &#39;+appEui/+type/+method/+gatewayId/#device&#39;</p>
 
 ## protocolRef : <code>object</code>
 References used to validate payloads
+
+LPP_TYPE = IPSO_OBJECT_ID - 3200
 
 **Kind**: global namespace  
 **Properties**
@@ -509,14 +512,14 @@ pattern - '+appEui/+type/+method/+gatewayId/#device'
 Oma Object References.
 
 **Kind**: global external  
-**See**: [https://api.aloes.io/api/omaObjects](https://api.aloes.io/api/omaObjects)  
+**See**: [https://aloes.io/app/api/omaObjects](https://aloes.io/app/api/omaObjects)  
 <a name="external_OmaResources"></a>
 
 ## OmaResources
 Oma Resources References.
 
 **Kind**: global external  
-**See**: [https://api.aloes.io/api/omaResources](https://api.aloes.io/api/omaResources)  
+**See**: [https://aloes.io/app/api/omaResources](https://aloes.io/app/api/omaResources)  
 <a name="external_CayenneLPP"></a>
 
 ## CayenneLPP

@@ -1,12 +1,13 @@
-require('@babel/register');
-
-import {assert} from 'chai';
-import {cayennePatternDetector} from '../lib/detector';
+const {assert} = require('chai');
+const {cayennePatternDetector} = require('../lib/detector');
 
 //  const cayennePattern =  "+appEui/+type/+method/+gatewayId/#device";
 
 describe('cayennePatternDetector - test 1', () => {
-  const payload = Buffer.from('005b7a00d07ed5b370dc0b20000ba30400f432f59ab267', 'hex');
+  const payload = Buffer.from(
+    '005b7a00d07ed5b370dc0b20000ba30400f432f59ab267',
+    'hex',
+  );
   const packet = {
     topic:
       '5c635046e1fec60e6050e47b/Join Request/b827ebfffe6cc78d/0004a30b001fbb91',

@@ -15,12 +15,6 @@ With npm :
 $ npm install cayennelpp-handlers --save
 ```
 
-Via script tag :
-
-```html
-<script src="https://unpkg.com/cayennelpp-handlers"></script>
-```
-
 ## Linting
 
 With ESLint
@@ -50,10 +44,3 @@ $ npm run docs:build
 $ npm run docs:serve
 ```
 
-## Build
-
-With Babel
-
-```bash
-$ npm run build-lib
-```
