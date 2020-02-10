@@ -52,18 +52,18 @@ increment the buffer cursor</p>
 <dd><p>Return location coordinates and
 increment the buffer cursor</p>
 </dd>
-<dt><a href="#cayenneBufferDecoder">cayenneBufferDecoder(buffer)</a> ⇒ <code>object</code></dt>
+<dt><a href="#cayenneBufferDecoder">cayenneBufferDecoder(packet)</a> ⇒ <code>object</code></dt>
 <dd><p>Decode LoraWan buffer containing a <a href="/cayennelpp/#cayennelpp">CayenneLPP</a> payload</p>
 </dd>
-<dt><a href="#cayenneToOmaObject">cayenneToOmaObject(msg)</a> ⇒ <code>object</code></dt>
+<dt><a href="#cayenneToOmaObject">cayenneToOmaObject(packet, protocol)</a> ⇒ <code>Array.&lt;object&gt;</code></dt>
 <dd><p>Find corresponding <a href="/cayennelpp/#omaobjects">OMA Object</a> to incoming <a href="/cayennelpp/#cayennelpp">CayenneLPP</a> datas
 pattern - &#39;+appEui/+type/+method/+gatewayId/#device&#39;</p>
 </dd>
-<dt><a href="#cayenneToOmaResources">cayenneToOmaResources(msg)</a> ⇒ <code>object</code></dt>
+<dt><a href="#cayenneToOmaResources">cayenneToOmaResources(packet, protocol)</a> ⇒ <code>Array.&lt;object&gt;</code></dt>
 <dd><p>Find corresponding <a href="/cayennelpp/#omaresources">OMA Resources</a> to incoming <a href="/cayennelpp/#cayennelpp">CayenneLPP</a> datas
 pattern - &#39;+appEui/+type/+method/+gatewayId/#device&#39;</p>
 </dd>
-<dt><a href="#cayenneDecoder">cayenneDecoder(packet, protocol)</a> ⇒ <code>object</code></dt>
+<dt><a href="#cayenneDecoder">cayenneDecoder(packet, protocol)</a> ⇒ <code>functions</code></dt>
 <dd><p>Convert incoming <a href="/cayennelpp/#cayennelpp">CayenneLPP</a> data to Aloes Client sensor instance
 pattern - &quot;+prefixedDevEui/+nodeId/+sensorId/+method/+ack/+subType&quot;</p>
 </dd>
@@ -244,7 +244,7 @@ increment the buffer cursor
 **Returns**: object  
 <a name="cayenneBufferDecoder"></a>
 
-## cayenneBufferDecoder(buffer) ⇒ <code>object</code>
+## cayenneBufferDecoder(packet) ⇒ <code>object</code>
 Decode LoraWan buffer containing a [CayenneLPP](/cayennelpp/#cayennelpp) payload
 
 **Kind**: global function  
@@ -252,46 +252,48 @@ Decode LoraWan buffer containing a [CayenneLPP](/cayennelpp/#cayennelpp) payload
 
 | Param | Type | Description |
 | --- | --- | --- |
-| buffer | <code>object</code> | Decoded LoraWan packet. |
+| packet | <code>buffer</code> | Incoming Lora packet. |
 
 <a name="cayenneToOmaObject"></a>
 
-## cayenneToOmaObject(msg) ⇒ <code>object</code>
+## cayenneToOmaObject(packet, protocol) ⇒ <code>Array.&lt;object&gt;</code>
 Find corresponding [OMA Object](/cayennelpp/#omaobjects) to incoming [CayenneLPP](/cayennelpp/#cayennelpp) datas
 pattern - '+appEui/+type/+method/+gatewayId/#device'
 
 **Kind**: global function  
-**Returns**: <code>object</code> - composed instance  
+**Returns**: <code>Array.&lt;object&gt;</code> - composed instances  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| msg | <code>object</code> | Decoded MQTT packet. |
+| packet | <code>buffer</code> | Incoming MQTT (Lora) packet. |
+| protocol | <code>object</code> | Protocol paramters ( coming from patternDetector ). |
 
 <a name="cayenneToOmaResources"></a>
 
-## cayenneToOmaResources(msg) ⇒ <code>object</code>
+## cayenneToOmaResources(packet, protocol) ⇒ <code>Array.&lt;object&gt;</code>
 Find corresponding [OMA Resources](/cayennelpp/#omaresources) to incoming [CayenneLPP](/cayennelpp/#cayennelpp) datas
 pattern - '+appEui/+type/+method/+gatewayId/#device'
 
 **Kind**: global function  
-**Returns**: <code>object</code> - composed instance  
+**Returns**: <code>Array.&lt;object&gt;</code> - composed instances  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| msg | <code>object</code> | Decoded MQTT packet. |
+| packet | <code>buffer</code> | Incoming MQTT (Lora) packet. |
+| protocol | <code>object</code> | Protocol paramters ( coming from patternDetector ). |
 
 <a name="cayenneDecoder"></a>
 
-## cayenneDecoder(packet, protocol) ⇒ <code>object</code>
+## cayenneDecoder(packet, protocol) ⇒ <code>functions</code>
 Convert incoming [CayenneLPP](/cayennelpp/#cayennelpp) data to Aloes Client sensor instance
 pattern - "+prefixedDevEui/+nodeId/+sensorId/+method/+ack/+subType"
 
 **Kind**: global function  
-**Returns**: <code>object</code> - composed sensor instance  
+**Returns**: <code>functions</code> - cayenneToOmaObject | cayenneToOmaResources  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| packet | <code>object</code> | Incoming MQTT packet. |
+| packet | <code>object</code> | Incoming MQTT (Lora) packet. |
 | protocol | <code>object</code> | Protocol paramters ( coming from patternDetector ). |
 
 <a name="cayennePatternDetector"></a>
