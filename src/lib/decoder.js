@@ -161,7 +161,7 @@ const getLocation = (buffer, cursor) => {
 /**
  * Decode LoraWan buffer containing a [CayenneLPP]{@link /cayennelpp/#cayennelpp} payload
  * @method cayenneBufferDecoder
- * @param {object} buffer - Decoded LoraWan packet.
+ * @param {buffer} packet - Incoming Lora packet.
  * @returns {object} Decoded channels
  */
 const cayenneBufferDecoder = buffer => {
@@ -169,7 +169,7 @@ const cayenneBufferDecoder = buffer => {
     const channels = {};
     let cursor = 0;
     let current = null;
-    logger(3, 'cayennelpp- handlers', 'bufferDecoder:req', {buffer, cursor});
+    logger(3, 'cayennelpp-handlers', 'bufferDecoder:req', {buffer, cursor});
     while (cursor < buffer.length) {
       if (current !== null) {
         // channel part is defined
@@ -211,7 +211,7 @@ const cayenneBufferDecoder = buffer => {
             delete channels[buffer[cursor]];
             logger(
               2,
-              'cayennelpp- handlers',
+              'cayennelpp-handlers',
               'Unsupported data type',
               `${buffer[cursor]}`,
             );
@@ -228,11 +228,11 @@ const cayenneBufferDecoder = buffer => {
         }
       }
     }
-    logger(2, 'cayennelpp- handlers', 'bufferDecoder:res', {channels});
+    logger(2, 'cayennelpp-handlers', 'bufferDecoder:res', {channels});
     if (!channels) throw new Error('Unsupported data type');
     return channels;
   } catch (error) {
-    logger(2, 'cayennelpp- handlers', 'bufferDecoder:err', error);
+    logger(2, 'cayennelpp-handlers', 'bufferDecoder:err', error);
     return null;
   }
 };
@@ -241,31 +241,38 @@ const cayenneBufferDecoder = buffer => {
  * Find corresponding [OMA Object]{@link /cayennelpp/#omaobjects} to incoming [CayenneLPP]{@link /cayennelpp/#cayennelpp} datas
  * pattern - '+appEui/+type/+method/+gatewayId/#device'
  * @method cayenneToOmaObject
- * @param {object} msg - Decoded MQTT packet.
- * @returns {object} composed instance
+ * @param {buffer} packet - Incoming MQTT (Lora) packet.
+ * @param {object} protocol - Protocol paramters ( coming from patternDetector ).
+ * @returns {object[]} composed instances
  */
 const cayenneToOmaObject = (packet, protocol) => {
   try {
     if (!packet || packet === null) {
       throw new Error('Wrong packet input');
     }
-    logger(4, 'cayennelpp- handlers', 'toOmaObject:req', packet);
+    logger(4, 'cayennelpp-handlers', 'toOmaObject:req', packet);
     //  const maxsize = 51;
     const channels = cayenneBufferDecoder(packet);
     const nativeTypes = Object.getOwnPropertyNames(channels);
     const decoded = nativeTypes.map((nativeType, index) => {
-      const nativeResource = Object.keys(channels[nativeType])[0];
-      const omaObject = omaObjects.find(
-        object => object.value === Number(nativeType) + 3200,
-      );
-      if (!omaObject) throw new Error('Wrong OMA Object id');
-      const omaView = omaViews.find(
-        object => object.value === Number(nativeType) + 3200,
-      );
+      if (!Object.keys(channels[nativeType])) {
+        return null;
+      }
+      const type = Number(nativeType) + 3200;
+      const nativeResource = Number(Object.keys(channels[nativeType])[0]);
+      const omaObject = omaObjects.find(object => object.value === type);
+      if (!omaObject) return null;
+      const omaView = omaViews.find(object => object.value === type);
       const resources = {
         ...omaObject.resources,
         ...channels[nativeType],
       };
+      logger(
+        4,
+        'cayennelpp-handlers',
+        'toOmaObject:res',
+        channels[nativeType][nativeResource],
+      );
 
       return {
         packet,
@@ -276,8 +283,9 @@ const cayenneToOmaObject = (packet, protocol) => {
         colors: omaView.resources,
         nativeType,
         nativeResource,
+        // nativeNodeId: protocol,
         nativeSensorId: index,
-        type: Number(nativeType) + 3200,
+        type,
         devEui: protocol.devEui,
         devAddr: protocol.devAddr,
         resources,
@@ -287,10 +295,10 @@ const cayenneToOmaObject = (packet, protocol) => {
       };
     });
 
-    logger(4, 'cayennelpp- handlers', 'toOmaObject:res', decoded);
+    // logger(4, 'cayennelpp-handlers', 'toOmaObject:res', decoded);
     return decoded;
   } catch (error) {
-    logger(2, 'cayennelpp- handlers', 'toOmaObject:err', error);
+    logger(2, 'cayennelpp-handlers', 'toOmaObject:err', error);
     return null;
   }
 };
@@ -299,25 +307,28 @@ const cayenneToOmaObject = (packet, protocol) => {
  * Find corresponding [OMA Resources]{@link /cayennelpp/#omaresources} to incoming [CayenneLPP]{@link /cayennelpp/#cayennelpp} datas
  * pattern - '+appEui/+type/+method/+gatewayId/#device'
  * @static
- * @param {object} msg - Decoded MQTT packet.
- * @returns {object} composed instance
+ * @param {buffer} packet -Incoming MQTT (Lora) packet.
+ * @param {object} protocol - Protocol paramters ( coming from patternDetector ).
+ * @returns {object[]} composed instances
  */
 const cayenneToOmaResources = (packet, protocol) => {
   try {
-    if (!packet || packet == null) {
+    if (!packet || packet === null) {
       throw new Error('Wrong packet input');
     }
-    logger(4, 'cayennelpp- handlers', 'toOmaResources:req', packet);
+    logger(4, 'cayennelpp-handlers', 'toOmaResources:req', packet);
 
     //  const maxsize = 51;
     const channels = cayenneBufferDecoder(packet);
     const nativeTypes = Object.getOwnPropertyNames(channels);
     const decoded = nativeTypes.map((nativeType, index) => {
-      const nativeResource = Object.keys(channels[nativeType])[0];
-      const omaObject = omaObjects.find(
-        object => object.value === Number(nativeType) + 3200,
-      );
-      if (!omaObject) throw new Error('Wrong OMA Object id');
+      if (!Object.keys(channels[nativeType])) {
+        return null;
+      }
+      const type = Number(nativeType) + 3200;
+      const nativeResource = Number(Object.keys(channels[nativeType])[0]);
+      const omaObject = omaObjects.find(object => object.value === type);
+      if (!omaObject) return null;
       const resources = {
         ...omaObject.resources,
         ...channels[nativeType],
@@ -329,7 +340,7 @@ const cayenneToOmaResources = (packet, protocol) => {
         nativeType,
         nativeResource,
         nativeSensorId: index,
-        type: Number(nativeType) + 3200,
+        type,
         devEui: protocol.devEui,
         devAddr: protocol.devAddr,
         resources,
@@ -338,10 +349,10 @@ const cayenneToOmaResources = (packet, protocol) => {
       };
     });
 
-    logger(4, 'cayennelpp- handlers', 'toOmaResources:res', decoded);
+    logger(4, 'cayennelpp-handlers', 'toOmaResources:res', decoded);
     return decoded;
   } catch (error) {
-    logger(2, 'cayennelpp- handlers', 'toOmaResources:err', error);
+    logger(2, 'cayennelpp-handlers', 'toOmaResources:err', error);
     return null;
   }
 };
@@ -349,16 +360,20 @@ const cayenneToOmaResources = (packet, protocol) => {
 /**
  * Convert incoming [CayenneLPP]{@link /cayennelpp/#cayennelpp} data to Aloes Client sensor instance
  * pattern - "+prefixedDevEui/+nodeId/+sensorId/+method/+ack/+subType"
- * @param {object} packet - Incoming MQTT packet.
+ * @param {object} packet - Incoming MQTT (Lora) packet.
  * @param {object} protocol - Protocol paramters ( coming from patternDetector ).
- * @returns {object} composed sensor instance
+ * @returns {functions} cayenneToOmaObject | cayenneToOmaResources
  */
 const cayenneDecoder = (packet, protocol) => {
   try {
     if (!protocol.packet || !protocol.packet.getBuffers()) {
       throw new Error('Wrong packet input');
     }
-    logger(4, 'cayennelpp- handlers', 'decoder:req', protocol.method);
+    logger(4, 'cayennelpp-handlers', 'decoder:req', protocol.method);
+
+    // if (!Buffer.isBuffer(packet)) {
+    //   packet = Buffer.from(packet, 'hex');
+    // }
 
     if (protocol.method && (protocol.devEui || protocol.devAddr)) {
       protocol.transportProtocol = 'loraWan';
@@ -385,7 +400,7 @@ const cayenneDecoder = (packet, protocol) => {
     }
     throw new Error('Invalid params');
   } catch (error) {
-    logger(2, 'cayennelpp- handlers', 'decoder:err', error);
+    logger(2, 'cayennelpp-handlers', 'decoder:err', error);
     return null;
   }
 };

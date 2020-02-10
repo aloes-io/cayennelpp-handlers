@@ -54,6 +54,7 @@ const addAnalogInput = (buffer, cursor, channel, value) => {
   if (cursor + ANALOG_INPUT_SIZE > maxSize) {
     return 0;
   }
+  value = Number(value);
   const floorVal = floor(value, 2) * 100;
   // buffer.writeUInt8(channel, this.cursor++);
   // buffer[this.cursor++] = ANALOG_INPUT;
@@ -78,6 +79,7 @@ const addDigitalInput = (buffer, cursor, channel, value) => {
   if (cursor + DIGITAL_INPUT_SIZE > maxSize) {
     return 0;
   }
+  value = Number(value);
   buffer.writeUInt8(channel, (cursor += 1));
   buffer[(cursor += 1)] = DIGITAL_INPUT;
   buffer.writeUInt8(value, (cursor += 1));
@@ -98,6 +100,7 @@ const addLuminosity = (buffer, cursor, channel, value) => {
   if (cursor + LUMINOSITY_SIZE > maxSize) {
     return 0;
   }
+  value = Number(value);
   buffer.writeUInt8(channel, (cursor += 1));
   buffer[(cursor += 1)] = LUMINOSITY;
   buffer.writeUInt16BE(value, cursor);
@@ -110,6 +113,7 @@ const addPresence = (buffer, cursor, channel, value) => {
   if (cursor + PRESENCE_SIZE > maxSize) {
     return 0;
   }
+  value = Number(value);
   buffer.writeUInt8(channel, (cursor += 1));
   buffer[(cursor += 1)] = PRESENCE;
   buffer.writeUInt8(value, (cursor += 1));
@@ -130,6 +134,7 @@ const addTemperature = (buffer, cursor, channel, value) => {
   if (cursor + TEMPERATURE_SIZE > maxSize) {
     return 0;
   }
+  value = Number(value);
   const floorVal = floor(value, 1) * 10;
   buffer.writeUInt8(channel, (cursor += 1));
   buffer[(cursor += 1)] = TEMPERATURE;
@@ -152,6 +157,7 @@ const addRelativeHumidity = (buffer, cursor, channel, value) => {
   if (cursor + HUMIDITY_SIZE > maxSize) {
     return 0;
   }
+  value = Number(value);
   //  Multiply by 2 because codec resolution is set to 0.5 and precision 1
   const floorVal = floor(value * 2);
   buffer.writeUInt8(channel, (cursor += 1));
@@ -199,6 +205,7 @@ const addBarometer = (buffer, cursor, channel, value) => {
   if (cursor + BAROMETER_SIZE > maxSize) {
     return 0;
   }
+  value = Number(value);
   const floorVal = floor(value, 1) * 10;
   buffer.writeUInt8(channel, (cursor += 1));
   buffer[(cursor += 1)] = BAROMETER;
@@ -221,6 +228,7 @@ const addUnixTime = (buffer, cursor, channel, value) => {
   if (cursor + UNIXTIME_SIZE > maxSize) {
     return 0;
   }
+  value = Number(value);
   const timestamp = value || new Date();
   buffer.writeUInt8(channel, (cursor += 1));
   buffer[(cursor += 1)] = UNIXTIME;
@@ -380,8 +388,10 @@ const cayenneEncoder = instance => {
       logger(4, 'cayennelpp-handlers', 'encoder:req', instance);
       const buffer = Buffer.alloc(maxSize);
       const channel = Number(instance.nativeSensorId);
+      // todo concat nativeSensorId and nativeNodeId for channel ?
       const type = Number(instance.nativeType);
-      const value = Number(instance.value);
+      // const value = Number(instance.value);
+      const value = instance.value;
       const payload = cayenneBufferEncoder(buffer, type, channel, value);
       logger(4, 'cayennelpp-handlers', 'encoder:res', payload);
       if (!payload || payload === null) {

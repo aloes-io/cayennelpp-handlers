@@ -61,7 +61,6 @@ const cayennePatternDetector = payload => {
       return pattern;
     }
     return pattern;
-    //  throw 'Error: Invalid packet';
   } catch (error) {
     logger(2, 'cayennelpp-handlers', 'patternDetector:err', error);
     return null;
