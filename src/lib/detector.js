@@ -1,16 +1,16 @@
 const loraPacket = require('lora-packet');
 const logger = require('aloes-logger');
-const protocolRef = require('./common');
+const {protocolRef} = require('./common');
 
 /**
  * Check incoming MQTT packet.payload against [CayenneLPP]{@link /cayennelpp/#cayennelpp}
  * pattern '+appEui/+type/+method/+gatewayId/#device'
  * @method cayennePatternDetector
- * @param {object} packet - The MQTT packet, including LoraWan PHYPayload.
- * @returns {object} found pattern.name and pattern.params
+ * @param {object} payload - The MQTT packet, including LoraWan PHYPayload.
+ * @returns {object | null} pattern
  */
 
-const cayennePatternDetector = payload => {
+const cayennePatternDetector = (payload) => {
   try {
     const pattern = {name: 'empty', params: {}};
     const packet = loraPacket.fromWire(payload);
@@ -20,16 +20,18 @@ const cayennePatternDetector = payload => {
       'patternDetector:req',
       packet.getMType().toString('hex'),
     );
-    if (!packet || packet === null || !packet.getBuffers()) {
+    if (!packet || !packet.getBuffers()) {
       throw new Error('Missing packet');
     }
     const method = packet.getMType().toString('hex');
-    if (!method || method === null) {
+    if (!method) {
       throw new Error('Invalid packet');
     }
     const methodExists = protocolRef.validators.methods.some(
-      meth => meth === method,
+      (meth) => meth === method,
     );
+    const direction = packet.getDir().toString('hex'); 
+
     let deviceIsValid = false;
 
     if (
@@ -50,13 +52,12 @@ const cayennePatternDetector = payload => {
       pattern.params.devEui = packet.getBuffers().DevEUI.toString('hex');
       pattern.params.appEui = packet.getBuffers().AppEUI.toString('hex');
       pattern.params.devNonce = packet.getBuffers().DevNonce.toString('hex');
-    } else {
-      return pattern;
     }
 
     if (methodExists && deviceIsValid) {
       pattern.name = 'cayenneLPP';
       pattern.params.method = method;
+      pattern.params.direction = direction;
       pattern.params.packet = packet;
       return pattern;
     }

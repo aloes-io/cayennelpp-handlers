@@ -12,16 +12,15 @@ const {
   UNIXTIME,
   GYROMETER,
   LOCATION,
-} = require('./common');
+} = require('./common').types;
 
 /**
  * Return a float value and
  * increment the buffer cursor
  * @static
- * @return float
+ * @returns {object}
  */
 const getAnalogInput = (buffer, cursor) => {
-  //  const value = this.buffer.readInt16BE(++this.cursor);
   const value = buffer.readInt16BE((cursor += 1));
   cursor += 1;
   return {'5600': value / 100};
@@ -30,7 +29,7 @@ const getAnalogInput = (buffer, cursor) => {
 /**
  * Return an integer value
  * @static
- * @return integer
+ * @returns {object}
  */
 const getDigitalInput = (buffer, cursor) => {
   const value = buffer[(cursor += 1)];
@@ -41,7 +40,7 @@ const getDigitalInput = (buffer, cursor) => {
  * Return a luminosity in Lux and
  * increment the buffer cursor
  * @static
- * @return integer
+ * @returns {object}
  */
 const getLuminosity = (buffer, cursor) => {
   const value = buffer.readInt16BE((cursor += 1));
@@ -52,7 +51,7 @@ const getLuminosity = (buffer, cursor) => {
 /**
  * Return an integer value
  * @static
- * @return integer
+ * @returns {object}
  */
 const getPresence = (buffer, cursor) => {
   const value = buffer[(cursor += 1)];
@@ -63,7 +62,7 @@ const getPresence = (buffer, cursor) => {
  * Return a temperature and
  * increment the buffer cursor
  * @static
- * @return float
+ * @returns {object}
  */
 const getTemperature = (buffer, cursor) => {
   const value = buffer.readInt16BE((cursor += 1));
@@ -75,7 +74,7 @@ const getTemperature = (buffer, cursor) => {
  * Return a relative humidity value in percents and
  * increment the buffer cursor
  * @static
- * @returns float
+ * @returns {object}
  */
 const getRelativeHumidity = (buffer, cursor) => {
   // const value = this.buffer[(this.cursor += 1)] / 2;
@@ -88,7 +87,7 @@ const getRelativeHumidity = (buffer, cursor) => {
  * Return axis coordinates and
  * increment the buffer cursor
  * @static
- * @return object
+ * @returns {object}
  */
 const getAccelerometer = (buffer, cursor) => {
   const x = buffer.readInt16BE((cursor += 1));
@@ -105,7 +104,7 @@ const getAccelerometer = (buffer, cursor) => {
  * Return a pressure and
  * increment the buffer cursor
  * @static
- * @return float
+ * @returns {object}
  */
 const getBarometer = (buffer, cursor) => {
   const value = buffer.readInt16BE((cursor += 1));
@@ -116,7 +115,7 @@ const getBarometer = (buffer, cursor) => {
  * Return a timestamp and
  * increment the buffer cursor
  * @static
- * @return float
+ * @returns {object}
  */
 const getUnixTime = (buffer, cursor) => {
   const value = buffer.readInt32BE((cursor += 1));
@@ -127,7 +126,7 @@ const getUnixTime = (buffer, cursor) => {
  * Return axis coordinates and
  * increment the buffer cursor
  * @static
- * @return object
+ * @returns {object}
  */
 const getGyrometer = (buffer, cursor) => {
   const x = buffer.readInt16BE((cursor += 1));
@@ -144,7 +143,7 @@ const getGyrometer = (buffer, cursor) => {
  * Return location coordinates and
  * increment the buffer cursor
  * @static
- * @return object
+ * @returns {object}
  */
 const getLocation = (buffer, cursor) => {
   const latitude = buffer.readInt16BE((cursor += 1));
@@ -162,9 +161,9 @@ const getLocation = (buffer, cursor) => {
  * Decode LoraWan buffer containing a [CayenneLPP]{@link /cayennelpp/#cayennelpp} payload
  * @method cayenneBufferDecoder
  * @param {buffer} packet - Incoming Lora packet.
- * @returns {object} Decoded channels
+ * @returns {object | null} channels
  */
-const cayenneBufferDecoder = buffer => {
+const cayenneBufferDecoder = (buffer) => {
   try {
     const channels = {};
     let cursor = 0;
@@ -243,7 +242,7 @@ const cayenneBufferDecoder = buffer => {
  * @method cayenneToOmaObject
  * @param {buffer} packet - Incoming MQTT (Lora) packet.
  * @param {object} protocol - Protocol paramters ( coming from patternDetector ).
- * @returns {object[]} composed instances
+ * @returns {object[] | null} instances
  */
 const cayenneToOmaObject = (packet, protocol) => {
   try {
@@ -260,9 +259,9 @@ const cayenneToOmaObject = (packet, protocol) => {
       }
       const type = Number(nativeType) + 3200;
       const nativeResource = Number(Object.keys(channels[nativeType])[0]);
-      const omaObject = omaObjects.find(object => object.value === type);
+      const omaObject = omaObjects.find(({value}) => value === type);
       if (!omaObject) return null;
-      const omaView = omaViews.find(object => object.value === type);
+      const omaView = omaViews.find(({value}) => value === type);
       const resources = {
         ...omaObject.resources,
         ...channels[nativeType],
@@ -309,7 +308,7 @@ const cayenneToOmaObject = (packet, protocol) => {
  * @static
  * @param {buffer} packet -Incoming MQTT (Lora) packet.
  * @param {object} protocol - Protocol paramters ( coming from patternDetector ).
- * @returns {object[]} composed instances
+ * @returns {object[] | null} instances
  */
 const cayenneToOmaResources = (packet, protocol) => {
   try {
@@ -327,7 +326,7 @@ const cayenneToOmaResources = (packet, protocol) => {
       }
       const type = Number(nativeType) + 3200;
       const nativeResource = Number(Object.keys(channels[nativeType])[0]);
-      const omaObject = omaObjects.find(object => object.value === type);
+      const omaObject = omaObjects.find(({value}) => value === type);
       if (!omaObject) return null;
       const resources = {
         ...omaObject.resources,
@@ -362,7 +361,7 @@ const cayenneToOmaResources = (packet, protocol) => {
  * pattern - "+prefixedDevEui/+nodeId/+sensorId/+method/+ack/+subType"
  * @param {object} packet - Incoming MQTT (Lora) packet.
  * @param {object} protocol - Protocol paramters ( coming from patternDetector ).
- * @returns {functions} cayenneToOmaObject | cayenneToOmaResources
+ * @returns {functions | null} cayenneToOmaObject | cayenneToOmaResources
  */
 const cayenneDecoder = (packet, protocol) => {
   try {

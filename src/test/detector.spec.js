@@ -15,7 +15,14 @@ describe('cayennePatternDetector - test 1', () => {
   };
   const pattern = cayennePatternDetector(payload);
   const params = pattern.params;
-  const keys = ['appEui', 'devNonce', 'method', 'devEui', 'packet'];
+  const keys = [
+    'appEui',
+    'devNonce',
+    'method',
+    'direction',
+    'devEui',
+    'packet',
+  ];
 
   it('pattern should exist', () => {
     assert.typeOf(pattern, 'object');
@@ -46,7 +53,7 @@ describe('cayennePatternDetector - test 2', () => {
   };
   const pattern = cayennePatternDetector(payload);
   const params = pattern.params;
-  const keys = ['frameCounter', 'method', 'devAddr', 'packet'];
+  const keys = ['frameCounter', 'method', 'direction', 'devAddr', 'packet'];
 
   it('pattern should exist', () => {
     assert.typeOf(pattern, 'object');
@@ -77,7 +84,14 @@ describe('cayennePatternDetector - test 3', () => {
   };
   const pattern = cayennePatternDetector(payload);
   const params = pattern.params;
-  const keys = ['appEui', 'devNonce', 'method', 'devEui', 'packet'];
+  const keys = [
+    'appEui',
+    'devNonce',
+    'method',
+    'direction',
+    'devEui',
+    'packet',
+  ];
 
   it('pattern should exist', () => {
     assert.typeOf(pattern, 'object');

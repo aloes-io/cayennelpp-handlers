@@ -23,7 +23,7 @@ const {
   GYROMETER_SIZE,
   LOCATION,
   LOCATION_SIZE,
-} = require('./common');
+} = require('./common').types;
 
 // Data ID + Data Type + Data Size
 const maxSize = 13;
@@ -33,8 +33,9 @@ const maxChannelValue = 99;
  * @description Validate chosen channel
  * @static
  * @param {int} channel The channel selected
+ * @throws {Error} 'Channels above 100 are reserved.'
  */
-const validate = channel => {
+const validate = (channel) => {
   if (channel > maxChannelValue) {
     throw new Error('Channels above 100 are reserved.');
   }
@@ -45,9 +46,10 @@ const validate = channel => {
  * unit = UNIT.UNDEFINED
  * @static
  * @param {object} buffer - Empty buffer.
- * @param {int} cursor - Writing position.
- * @param {int} channel The channel for this sensor.
- * @param {float} value A floating point number accurate to two decimal place. lodash.floor(value, 2)
+ * @param {number} cursor - Writing position.
+ * @param {number} channel The channel for this sensor.
+ * @param {number} value A floating point number accurate to two decimal place. lodash.floor(value, 2)
+ * @returns {number}
  */
 const addAnalogInput = (buffer, cursor, channel, value) => {
   validate(channel, value);
@@ -70,9 +72,10 @@ const addAnalogInput = (buffer, cursor, channel, value) => {
  * unit = UNIT.UNDEFINED
  * @static
  * @param {object} buffer - Empty buffer.
- * @param {int} cursor - Writing position.
- * @param {int} channel The channel for this sensor.
- * @param {int} value The value, unsigned int8, should be 0 or 1.
+ * @param {number} cursor - Writing position.
+ * @param {number} channel The channel for this sensor.
+ * @param {number} value The value, unsigned int8, should be 0 or 1.
+ * @returns {number}
  */
 const addDigitalInput = (buffer, cursor, channel, value) => {
   validate(channel, value);
@@ -91,9 +94,10 @@ const addDigitalInput = (buffer, cursor, channel, value) => {
  * unit = UNIT.LUX
  * @static
  * @param {object} buffer - Empty buffer.
- * @param {int} cursor - Writing position.
- * @param {int} channel The channel for this sensor.
- * @param {float} value An unsigned int16 value. 0-65535.
+ * @param {number} cursor - Writing position.
+ * @param {number} channel The channel for this sensor.
+ * @param {number} value An unsigned int16 value. 0-65535.
+ * @returns {number}
  */
 const addLuminosity = (buffer, cursor, channel, value) => {
   validate(channel, value);
@@ -108,6 +112,15 @@ const addLuminosity = (buffer, cursor, channel, value) => {
   return cursor;
 };
 
+/**
+ * @description Creates a payload with type PRESENCE.
+ * @static
+ * @param {object} buffer - Empty buffer.
+ * @param {number} cursor - Writing position.
+ * @param {number} channel The channel for this sensor.
+ * @param {number} value An unsigned value. 0-1
+ * @returns {number}
+ */
 const addPresence = (buffer, cursor, channel, value) => {
   validate(channel, value);
   if (cursor + PRESENCE_SIZE > maxSize) {
@@ -125,9 +138,10 @@ const addPresence = (buffer, cursor, channel, value) => {
  * unit = UNIT.CELSIUS
  * @static
  * @param {object} buffer - Empty buffer.
- * @param {int} cursor - Writing position.
- * @param {int} channel The channel for this sensor.
- * @param {float} value A floating point number accurate to one decimal place. lodash.floor(value, 1)
+ * @param {number} cursor - Writing position.
+ * @param {number} channel The channel for this sensor.
+ * @param {number} value A floating point number accurate to one decimal place. lodash.floor(value, 1)
+ * @returns {number}
  */
 const addTemperature = (buffer, cursor, channel, value) => {
   validate(channel, value);
@@ -148,9 +162,10 @@ const addTemperature = (buffer, cursor, channel, value) => {
  * unit = UNIT.PERCENT
  * @static
  * @param {object} buffer - Empty buffer.
- * @param {int} cursor - Writing position.
- * @param {int} channel The channel for this sensor.
- * @param {float} value A floating point number (%) accurate to one decimal place in 0.5 increments. Math.floor10(value, -1)
+ * @param {number} cursor - Writing position.
+ * @param {number} channel The channel for this sensor.
+ * @param {number} value A floating point number (%) accurate to one decimal place in 0.5 increments. Math.floor10(value, -1)
+ * @returns {number}
  */
 const addRelativeHumidity = (buffer, cursor, channel, value) => {
   validate(channel, value);
@@ -171,9 +186,10 @@ const addRelativeHumidity = (buffer, cursor, channel, value) => {
  * unit = UNIT.UNDEFINED
  * @static
  * @param {object} buffer - Empty buffer.
- * @param {int} cursor - Writing position.
- * @param {int} channel The channel for this sensor.
+ * @param {number} cursor - Writing position.
+ * @param {number} channel The channel for this sensor.
  * @param {object} value Object containing X, Y, Z value
+ * @returns {number}
  */
 const addAccelerometer = (buffer, cursor, channel, value) => {
   validate(channel, value);
@@ -196,9 +212,10 @@ const addAccelerometer = (buffer, cursor, channel, value) => {
  * unit = UNIT.PRESSURE
  * @static
  * @param {object} buffer - Empty buffer.
- * @param {int} cursor - Writing position.
- * @param {int} channel The channel for this sensor.
- * @param {float} value A floating point number accurate to one decimal place. lodash.floor(value, 1)
+ * @param {number} cursor - Writing position.
+ * @param {number} channel The channel for this sensor.
+ * @param {number} value A floating point number accurate to one decimal place. lodash.floor(value, 1)
+ * @returns {number}
  */
 const addBarometer = (buffer, cursor, channel, value) => {
   validate(channel, value);
@@ -219,9 +236,10 @@ const addBarometer = (buffer, cursor, channel, value) => {
  * unit = UNIT.UNDEFINED
  * @static
  * @param {object} buffer - Empty buffer.
- * @param {int} cursor - Writing position.
- * @param {int} channel The channel for this sensor.
+ * @param {number} cursor - Writing position.
+ * @param {number} channel The channel for this sensor.
  * @param {object} value Date() object
+ * @returns {number}
  */
 const addUnixTime = (buffer, cursor, channel, value) => {
   validate(channel, value);
@@ -242,9 +260,10 @@ const addUnixTime = (buffer, cursor, channel, value) => {
  * unit = UNIT.UNDEFINED
  * @static
  * @param {object} buffer - Empty buffer.
- * @param {int} cursor - Writing position.
- * @param {int} channel The channel for this sensor.
+ * @param {number} cursor - Writing position.
+ * @param {number} channel The channel for this sensor.
  * @param {object} value Object containing X, Y, Z value
+ * @returns {number}
  */
 const addGyrometer = (buffer, cursor, channel, value) => {
   validate(channel, value);
@@ -267,9 +286,10 @@ const addGyrometer = (buffer, cursor, channel, value) => {
  * unit = UNIT.UNDEFINED
  * @static
  * @param {object} buffer - Empty buffer.
- * @param {int} cursor - Writing position.
- * @param {int} channel The channel for this sensor.
+ * @param {number} cursor - Writing position.
+ * @param {number} channel The channel for this sensor.
  * @param {object} value Object containing latitude and longitude value
+ * @returns {number}
  */
 const addLocation = (buffer, cursor, channel, value) => {
   validate(channel, value);
@@ -296,6 +316,7 @@ const addLocation = (buffer, cursor, channel, value) => {
  * @static
  * @param {object} buffer - Empty buffer.
  * @param {int} cursor - Writing position.
+ * @returns {object}
  */
 const getPayload = (buffer, cursor) => {
   const buff = buffer.slice(0, cursor);
@@ -306,11 +327,11 @@ const getPayload = (buffer, cursor) => {
  * Filling the buffer with desired sensor parameters and value
  * @method cayenneBufferEncoder
  * @param {object} buffer - Empty buffer.
- * @param {int} type - CayenneLPP type.
- * @param {int} channel - CayenneLPP Channel ( max value: 99 ).
- * @param {float} value - sensor value.
+ * @param {number} type - CayenneLPP type.
+ * @param {number} channel - CayenneLPP Channel ( max value: 99 ).
+ * @param {number | object} value - sensor value.
+ * @returns {object | null}
  */
-
 const cayenneBufferEncoder = (buffer, type, channel, value) => {
   try {
     let cursor = 0;
@@ -375,31 +396,32 @@ const cayenneBufferEncoder = (buffer, type, channel, value) => {
  * Convert incoming Aloes Client data to [CayenneLPP]{@link /cayennelpp/#cayennelpp}
  * pattern - '+appEui/+type/+method/+gatewayId/#device'
  * @method cayenneEncoder
- * @param {object} packet - Sensor instance.
+ * @param {object} instance - Sensor instance.
+ * @throws {Error} 'Invalid instance'
+ * @returns {object | null}
  */
-
-const cayenneEncoder = instance => {
-  try {
-    if (
-      instance &&
-      instance.messageProtocol &&
-      instance.messageProtocol.toLowerCase() === 'cayennelpp'
-    ) {
-      logger(4, 'cayennelpp-handlers', 'encoder:req', instance);
-      const buffer = Buffer.alloc(maxSize);
-      const channel = Number(instance.nativeSensorId);
-      // todo concat nativeSensorId and nativeNodeId for channel ?
-      const type = Number(instance.nativeType);
-      // const value = Number(instance.value);
-      const value = instance.value;
-      const payload = cayenneBufferEncoder(buffer, type, channel, value);
-      logger(4, 'cayennelpp-handlers', 'encoder:res', payload);
-      if (!payload || payload === null) {
-        throw new Error('Type not supported');
-      }
-      return payload;
-    }
+const cayenneEncoder = (instance) => {
+  if (
+    !instance ||
+    !instance.messageProtocol ||
+    instance.messageProtocol.toLowerCase() !== 'cayennelpp'
+  ) {
     throw new Error('Invalid instance');
+  }
+  try {
+    logger(4, 'cayennelpp-handlers', 'encoder:req', instance);
+    const buffer = Buffer.alloc(maxSize);
+    const channel = Number(instance.nativeSensorId);
+    // todo concat nativeSensorId and nativeNodeId for channel ?
+    const type = Number(instance.nativeType);
+    // const value = Number(instance.value);
+    const value = instance.value;
+    const payload = cayenneBufferEncoder(buffer, type, channel, value);
+    logger(4, 'cayennelpp-handlers', 'encoder:res', payload);
+    if (typeof payload === 'undefined' || payload === null) {
+      throw new Error('Type not supported');
+    }
+    return payload;
   } catch (error) {
     logger(4, 'cayennelpp-handlers', 'encoder:err', error);
     return null;

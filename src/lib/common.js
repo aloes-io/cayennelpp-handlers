@@ -67,6 +67,16 @@ const protocolRef = {
   //   value: 0x02,
   //   size: 4,
   // },
+};
+
+/**
+ * References used to identify sensor types
+ *
+ * LPP_TYPE = IPSO_OBJECT_ID - 3200
+ *
+ * @namespace
+ */
+const types = {
   DIGITAL_INPUT: 0x00,
   DIGITAL_INPUT_SIZE: 3, // 1 byte
   DIGITAL_OUTPUT: 0x01,
@@ -93,22 +103,28 @@ const protocolRef = {
   GYROMETER_SIZE: 8, // 2 bytes per axis, 0.01 °/s
   LOCATION: 0x88,
   LOCATION_SIZE: 11, // 3 byte lon/lat 0.0001 °, 3 bytes alt 0.01 meter
-  UNIT: {
-    UNDEFINED: 'null',
-    PASCAL: 'pa', // Pascal
-    HECTOPASCAL: 'hpa', // Hectopascal
-    PERCENT: 'p', // % (0 to 100)
-    RATIO: 'r', // Ratio
-    VOLTS: 'v', // Volts
-    LUX: 'lux', // Lux
-    CENTIMETER: 'cm', // Centimeter
-    METER: 'm', // Meter
-    DIGITAL: 'd', // Digital (0/1)
-    FAHRENHEIT: 'f', // Fahrenheit
-    CELSIUS: 'c', // Celsius
-    KELVIN: 'k', // Kelvin
-    MILLIVOLTS: 'mv', // Millivolts
-  },
 };
 
-module.exports = protocolRef;
+/**
+ * References used to identify sensor units
+ *
+ * @namespace
+ */
+const units = {
+  UNDEFINED: 'null',
+  PASCAL: 'pa', // Pascal
+  HECTOPASCAL: 'hpa', // Hectopascal
+  PERCENT: 'p', // % (0 to 100)
+  RATIO: 'r', // Ratio
+  VOLTS: 'v', // Volts
+  LUX: 'lux', // Lux
+  CENTIMETER: 'cm', // Centimeter
+  METER: 'm', // Meter
+  DIGITAL: 'd', // Digital (0/1)
+  FAHRENHEIT: 'f', // Fahrenheit
+  CELSIUS: 'c', // Celsius
+  KELVIN: 'k', // Kelvin
+  MILLIVOLTS: 'mv', // Millivolts
+};
+
+module.exports = {protocolRef, types, units};
