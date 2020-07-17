@@ -19,12 +19,10 @@
 /**
  * References used to validate payloads
  *
- * LPP_TYPE = IPSO_OBJECT_ID - 3200
- *
  * @namespace
  * @property {string}  pattern - The pattern used by [CayenneLPP]{@link /cayennelpp/#cayennelpp} devices.
  * @property {object}  validators - Check inputs / build outputs
- * @property {array}   validators.methods - [0, 1, 2, 3, 4].
+ * @property {array}   validators.methods
  */
 const protocolRef = {
   pattern: '+appEui/+type/+method/+gatewayId/#device',
