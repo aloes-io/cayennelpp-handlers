@@ -38,7 +38,7 @@
     "lodash.floor": "^4.0.4",
     "lora-packet": "^0.7.14",
     "mqtt-pattern": "^1.2.0",
-    "oma-json": "^1.1.3"
+    "oma-json": "^1.1.4"
   },
   "devDependencies": {
     "chai": "^4.2.0",
@@ -50,7 +50,7 @@
     "light-server": "^2.6.4",
     "mocha": "^7.1.2",
     "prettier": "^2.0.5",
-    "vuepress": "^1.4.1"
+    "vuepress": "^1.5.4"
   },
   "prettier": {
     "bracketSpacing": false,

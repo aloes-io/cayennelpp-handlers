@@ -3,7 +3,6 @@
 <dl>
 <dt><a href="#protocolRef">protocolRef</a> : <code>object</code></dt>
 <dd><p>References used to validate payloads</p>
-<p>LPP_TYPE = IPSO_OBJECT_ID - 3200</p>
 </dd>
 <dt><a href="#types">types</a> : <code>object</code></dt>
 <dd><p>References used to identify sensor types</p>
@@ -155,8 +154,6 @@ pattern - &#39;+appEui/+type/+method/+gatewayId/#device&#39;</p>
 ## protocolRef : <code>object</code>
 References used to validate payloads
 
-LPP_TYPE = IPSO_OBJECT_ID - 3200
-
 **Kind**: global namespace  
 **Properties**
 
@@ -164,7 +161,7 @@ LPP_TYPE = IPSO_OBJECT_ID - 3200
 | --- | --- | --- |
 | pattern | <code>string</code> | The pattern used by [CayenneLPP](/cayennelpp/#cayennelpp) devices. |
 | validators | <code>object</code> | Check inputs / build outputs |
-| validators.methods | <code>array</code> | [0, 1, 2, 3, 4]. |
+| validators.methods | <code>array</code> |  |
 
 <a name="types"></a>
 
